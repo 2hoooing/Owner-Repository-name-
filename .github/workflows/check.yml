@@ -2,7 +2,7 @@ name: Melon Ticket Checker
 
 on:
   schedule:
-    - cron: '*/2 * * * *' # 5분마다 실행
+    - cron: '*/1 * * * *' # 5분마다 실행
   workflow_dispatch:
 
 jobs:
