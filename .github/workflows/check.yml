@@ -1,18 +1,5 @@
-name: Melon Ticket Checker (Custom)
-
-on:
-  schedule:
-    - cron: '*/10 * * * *' # 10분마다 실행
-  workflow_dispatch:
-
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Check seats and send Slack message
+        shell: bash  # ✅ bash를 명시!
         run: |
           dates=(
             "100001|5/23"
@@ -33,12 +20,11 @@ jobs:
             for seat_id in "${!seats[@]}"; do
               seat_name="${seats[$seat_id]}"
 
-              # 멜론 API 요청 (예시 URL 구조에 맞게 조정 필요)
               result=$(curl -s -H 'User-Agent: Mozilla/5.0' \
                 "https://ticket.melon.com/api/product/getBlockGradeSeatCount.json?productId=211159&scheduleId=$schedule_id")
 
               remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo==$seat_id) | .realSeatCntlk")
-              
+
               if [[ "$remain" == "null" || "$remain" == "" ]]; then
                 remain=0
               fi
@@ -51,11 +37,8 @@ jobs:
 
               curl -X POST -H 'Content-type: application/json' \
                 --data "{\"text\": \"$msg\"}" \
-                ${{ secrets.DISCORD_WEBHOOK }}
-              
+                "$DISCORD_WEBHOOK"
+
               sleep 1
             done
           done
-
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
