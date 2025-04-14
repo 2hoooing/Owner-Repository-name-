@@ -1,91 +1,61 @@
-name: Melon Ticket Checker
+name: Melon Ticket Checker (Custom)
 
 on:
   schedule:
     - cron: '*/10 * * * *' # 10분마다 실행
-  workflow_dispatch: # 수동 실행도 가능하게 함
+  workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Melon Ticket (5/23 다이아몬드석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100001
-          seat-id: 12170
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/23] 다이아몬드석에 자리가 생겼어요!'
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Check Melon Ticket (5/23 스탠딩석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100001
-          seat-id: 10007
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/23] 스탠딩석에 자리가 생겼어요!'
+      - name: Check seats and send Slack message
+        run: |
+          dates=(
+            "100001|5/23"
+            "100002|5/24"
+            "100003|5/25"
+          )
 
-      - name: Check Melon Ticket (5/23 일반지정석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100001
-          seat-id: 12171
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/23] 일반지정석에 자리가 생겼어요!'
+          declare -A seats=(
+            [12170]="다이아몬드석"
+            [10007]="스탠딩석"
+            [12171]="일반지정석"
+          )
 
-      - name: Check Melon Ticket (5/24 다이아몬드석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100002
-          seat-id: 12170
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/24] 다이아몬드석에 자리가 생겼어요!'
+          for date in "${dates[@]}"; do
+            schedule_id="${date%%|*}"
+            date_str="${date##*|}"
 
-      - name: Check Melon Ticket (5/24 스탠딩석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100002
-          seat-id: 10007
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/24] 스탠딩석에 자리가 생겼어요!'
+            for seat_id in "${!seats[@]}"; do
+              seat_name="${seats[$seat_id]}"
 
-      - name: Check Melon Ticket (5/24 일반지정석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100002
-          seat-id: 12171
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/24] 일반지정석에 자리가 생겼어요!'
+              # 멜론 API 요청 (예시 URL 구조에 맞게 조정 필요)
+              result=$(curl -s -H 'User-Agent: Mozilla/5.0' \
+                "https://ticket.melon.com/api/product/getBlockGradeSeatCount.json?productId=211159&scheduleId=$schedule_id")
 
-      - name: Check Melon Ticket (5/25 다이아몬드석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100003
-          seat-id: 12170
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/25] 다이아몬드석에 자리가 생겼어요!'
+              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo==$seat_id) | .realSeatCntlk")
+              
+              if [[ "$remain" == "null" || "$remain" == "" ]]; then
+                remain=0
+              fi
 
-      - name: Check Melon Ticket (5/25 스탠딩석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100003
-          seat-id: 10007
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/25] 스탠딩석에 자리가 생겼어요!'
+              if (( remain > 0 )); then
+                msg="[$date_str] $seat_name에 $remain석 생겼어요!"
+              else
+                msg="[$date_str] $seat_name은 아직 자리가 없어요 ㅠㅠ"
+              fi
 
-      - name: Check Melon Ticket (5/25 일반지정석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
-        with:
-          product-id: 211159
-          schedule-id: 100003
-          seat-id: 12171
-          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[5/25] 일반지정석에 자리가 생겼어요!'
+              curl -X POST -H 'Content-type: application/json' \
+                --data "{\"text\": \"$msg\"}" \
+                ${{ secrets.DISCORD_WEBHOOK }}
+              
+              sleep 1
+            done
+          done
+
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
