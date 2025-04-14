@@ -1,18 +1,91 @@
-name: Slack Webhook Test
+name: Melon Ticket Checker
 
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *' # 10분마다 실행
+  workflow_dispatch: # 수동 실행도 가능하게 함
 
 jobs:
-  send-message:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - name: Send test message to Slack
-        uses: slackapi/slack-github-action@v1.24.0
+      - name: Check Melon Ticket (5/23 다이아몬드석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
         with:
-          payload: |
-            {
-              "text": "✅ 슬랙 Webhook 테스트 성공! 메시지가 잘 도착했어요 :)"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+          product-id: 211159
+          schedule-id: 100001
+          seat-id: 12170
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/23] 다이아몬드석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/23 스탠딩석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100001
+          seat-id: 10007
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/23] 스탠딩석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/23 일반지정석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100001
+          seat-id: 12171
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/23] 일반지정석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/24 다이아몬드석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100002
+          seat-id: 12170
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/24] 다이아몬드석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/24 스탠딩석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100002
+          seat-id: 10007
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/24] 스탠딩석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/24 일반지정석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100002
+          seat-id: 12171
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/24] 일반지정석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/25 다이아몬드석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100003
+          seat-id: 12170
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/25] 다이아몬드석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/25 스탠딩석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100003
+          seat-id: 10007
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/25] 스탠딩석에 자리가 생겼어요!'
+
+      - name: Check Melon Ticket (5/25 일반지정석)
+        uses: mooyoul/melon-ticket-actions@v1.1.0
+        with:
+          product-id: 211159
+          schedule-id: 100003
+          seat-id: 12171
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[5/25] 일반지정석에 자리가 생겼어요!'
