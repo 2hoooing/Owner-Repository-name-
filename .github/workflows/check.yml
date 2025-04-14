@@ -1,5 +1,19 @@
+name: Melon Ticket Checker (Custom)
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # 10분마다 실행
+  workflow_dispatch: # 수동 실행도 가능하게 함
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Check seats and send Slack message
-        shell: bash  # ✅ bash를 명시!
+        shell: bash
         run: |
           dates=(
             "100001|5/23"
@@ -42,3 +56,6 @@
               sleep 1
             done
           done
+
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
