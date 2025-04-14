@@ -37,7 +37,7 @@ jobs:
               result=$(curl -s -H 'User-Agent: Mozilla/5.0' \
                 "https://ticket.melon.com/api/product/getBlockGradeSeatCount.json?productId=211159&scheduleId=$schedule_id")
 
-              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo==$seat_id) | .realSeatCntlk")
+              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo==\"$seat_id\") | .realSeatCntlk")
 
               if [[ "$remain" == "null" || "$remain" == "" ]]; then
                 remain=0
