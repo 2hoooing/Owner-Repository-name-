@@ -2,7 +2,7 @@ name: Melon Ticket Checker
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # 10분마다 실행
+    - cron: '*/10 * * * *' # 10분만능 실행
   workflow_dispatch:
 
 jobs:
@@ -11,41 +11,39 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[5/23] 다이아몬드석"
+          - date: '5/23'
             schedule-id: 100001
-            seat-id: 12170
-          - name: "[5/23] 스탠딩석"
-            schedule-id: 100001
-            seat-id: 10007
-          - name: "[5/23] 일반지정석"
-            schedule-id: 100001
-            seat-id: 12171
-          - name: "[5/24] 다이아몬드석"
+          - date: '5/24'
             schedule-id: 100002
-            seat-id: 12170
-          - name: "[5/24] 스탠딩석"
-            schedule-id: 100002
-            seat-id: 10007
-          - name: "[5/24] 일반지정석"
-            schedule-id: 100002
-            seat-id: 12171
-          - name: "[5/25] 다이아몬드석"
+          - date: '5/25'
             schedule-id: 100003
-            seat-id: 12170
-          - name: "[5/25] 스탠딩석"
-            schedule-id: 100003
-            seat-id: 10007
-          - name: "[5/25] 일반지정석"
-            schedule-id: 100003
-            seat-id: 12171
-
     steps:
-      - name: Check Melon Ticket ${{ matrix.name }}
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+      - name: Check Melon Ticket - Diamond
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: ${{ matrix.schedule-id }}
-          seat-id: ${{ matrix.seat-id }}
+          seat-id: 12170
           slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '${{ matrix.name }}에 좌석이 생겼어요! 🎉'
-          notify-when-unavailable: true # 좌석이 없을 때도 알림
+          message: '[${{ matrix.date }}] 다이아몬드석에 자막이 생겼어요!'
+          notify-when-unavailable: true
+
+      - name: Check Melon Ticket - Standing
+        uses: chooing/melon-ticket-actions-discord@main
+        with:
+          product-id: 211159
+          schedule-id: ${{ matrix.schedule-id }}
+          seat-id: 10007
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[${{ matrix.date }}] 스탠딩석에 자막이 생겼어요!'
+          notify-when-unavailable: true
+
+      - name: Check Melon Ticket - 일반지정석
+        uses: chooing/melon-ticket-actions-discord@main
+        with:
+          product-id: 211159
+          schedule-id: ${{ matrix.schedule-id }}
+          seat-id: 12171
+          slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: '[${{ matrix.date }}] 일반지정석에 자막이 생겼어요!'
+          notify-when-unavailable: true
