@@ -25,7 +25,7 @@ jobs:
           schedule-id: ${{ matrix.schedule-id }}
           seat-id: 12170
           slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[${{ matrix.date }}] 다이아몬드석에 자막이 생겼어요!'
+          message: '[${{ matrix.date }}] 다이아몬드석에 좌석이 생겼어요!'
           notify-when-unavailable: true
 
       - name: Check Melon Ticket - Standing
@@ -35,7 +35,7 @@ jobs:
           schedule-id: ${{ matrix.schedule-id }}
           seat-id: 10007
           slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[${{ matrix.date }}] 스탠딩석에 자막이 생겼어요!'
+          message: '[${{ matrix.date }}] 스탠딩석에 좌석이 생겼어요!'
           notify-when-unavailable: true
 
       - name: Check Melon Ticket - 일반지정석
@@ -45,5 +45,5 @@ jobs:
           schedule-id: ${{ matrix.schedule-id }}
           seat-id: 12171
           slack-incoming-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: '[${{ matrix.date }}] 일반지정석에 자막이 생겼어요!'
+          message: '[${{ matrix.date }}] 일반지정석에 좌석이 생겼어요!'
           notify-when-unavailable: true
