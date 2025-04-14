@@ -2,7 +2,7 @@ name: Melon Ticket Checker
 
 on:
   schedule:
-    - cron: '*/1 * * * *' # 1분마다 실행
+    - cron: '*/2 * * * *' # 1분마다 실행
   workflow_dispatch:
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Melon Ticket (5/23 다이아몬드석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100001
@@ -19,7 +19,7 @@ jobs:
           message: '[5/23] 다이아몬드석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/23 스탠딩석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100001
@@ -28,7 +28,7 @@ jobs:
           message: '[5/23] 스탠딩석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/23 일반지정석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100001
@@ -37,7 +37,7 @@ jobs:
           message: '[5/23] 일반지정석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/24 다이아몬드석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100002
@@ -46,7 +46,7 @@ jobs:
           message: '[5/24] 다이아몬드석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/24 스탠딩석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100002
@@ -55,7 +55,7 @@ jobs:
           message: '[5/24] 스탠딩석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/24 일반지정석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100002
@@ -64,7 +64,7 @@ jobs:
           message: '[5/24] 일반지정석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/25 다이아몬드석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100003
@@ -73,7 +73,7 @@ jobs:
           message: '[5/25] 다이아몬드석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/25 스탠딩석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100003
@@ -82,7 +82,7 @@ jobs:
           message: '[5/25] 스탠딩석에 자석이 생겼어요!'
 
       - name: Check Melon Ticket (5/25 일반지정석)
-        uses: mooyoul/melon-ticket-actions@v1.1.0
+        uses: chooing/melon-ticket-actions-discord@main
         with:
           product-id: 211159
           schedule-id: 100003
