@@ -37,14 +37,13 @@ jobs:
               result=$(curl -s -H 'User-Agent: Mozilla/5.0' \
                 "https://ticket.melon.com/api/product/getBlockGradeSeatCount.json?productId=211159&scheduleId=$schedule_id")
 
-              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo == $seat_id) | .realSeatCntlk")
+              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo == \"$seat_id\") | .realSeatCntlk")
 
               if [[ "$remain" == "null" || "$remain" == "" ]]; then
                 remain=0
               fi
 
-              # 구역 정보 처리
-              area_raw=$(echo "$result" | jq -r ".summary[] | select(.seatGradeNo == $seat_id) | .sntvList")
+              area_raw=$(echo "$result" | jq -r ".summary[] | select(.seatGradeNo == \"$seat_id\") | .sntvList")
               formatted_area=""
               IFS=';' read -ra parts <<< "$area_raw"
               for part in "${parts[@]}"; do
