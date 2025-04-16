@@ -1,0 +1,70 @@
+name: Melon Ticket Checker (Custom)
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # 매 10분마다 실행
+  workflow_dispatch:        # 수동 실행도 가능하게 함
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check seats and send Slack message
+        shell: bash
+        run: |
+          dates=(
+            "100001|5/23"
+            "100002|5/24"
+            "100003|5/25"
+          )
+
+          declare -A seats=(
+            [12170]="다이아몬드석"
+            [10007]="스탠딩석"
+            [12171]="일반지정석"
+          )
+
+          for date in "${dates[@]}"; do
+            schedule_id="${date%%|*}"
+            date_str="${date##*|}"
+
+            for seat_id in "${!seats[@]}"; do
+              seat_name="${seats[$seat_id]}"
+
+              result=$(curl -s -H 'User-Agent: Mozilla/5.0' \
+                "https://ticket.melon.com/api/product/getBlockGradeSeatCount.json?productId=211159&scheduleId=$schedule_id")
+
+              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo == \"$seat_id\") | .realSeatCntlk")
+
+              if [[ "$remain" == "null" || "$remain" == "" ]]; then
+                remain=0
+              fi
+
+              area_raw=$(echo "$result" | jq -r ".summary[] | select(.seatGradeNo == \"$seat_id\") | .sntvList")
+              formatted_area=""
+              IFS=';' read -ra parts <<< "$area_raw"
+              for part in "${parts[@]}"; do
+                floor="${part%%,*}"
+                block="${part##*,}"
+                formatted_area+="${floor}층 ${block}구역, "
+              done
+              formatted_area="${formatted_area%, }"
+
+              if (( remain > 0 )); then
+                msg="[$date_str] $seat_name에 $remain석 생겼어요! 구역: $formatted_area"
+              else
+                msg="[$date_str] $seat_name은 아직 자리가 없어요 ㅠㅠ"
+              fi
+
+              curl -X POST -H 'Content-type: application/json' \
+                --data "{\"text\": \"$msg\"}" \
+                "$DISCORD_WEBHOOK"
+
+              sleep 1
+            done
+          done
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
