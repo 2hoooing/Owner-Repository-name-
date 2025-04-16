@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: '*/10 * * * *' # 11분마다 실행
   workflow_dispatch: # 수동 실행도 가능하게 함
+test: force push to run scheduled workflow
 
 jobs:
   check:
