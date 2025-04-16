@@ -2,7 +2,7 @@ name: Melon Ticket Checker (Custom)
 
 on:
   schedule:
-    - cron: '*/1 * * * *' # 1분마다 실행
+    - cron: '*/10 * * * *' # 10분마다 실행
   workflow_dispatch: # 수동 실행도 가능하게 함
 
 jobs:
@@ -43,8 +43,19 @@ jobs:
                 remain=0
               fi
 
+              # 구역 정보 처리
+              area_raw=$(echo "$result" | jq -r ".summary[] | select(.seatGradeNo == $seat_id) | .sntvList")
+              formatted_area=""
+              IFS=';' read -ra parts <<< "$area_raw"
+              for part in "${parts[@]}"; do
+                floor="${part%%,*}"
+                block="${part##*,}"
+                formatted_area+="${floor}층 ${block}구역, "
+              done
+              formatted_area="${formatted_area%, }"
+
               if (( remain > 0 )); then
-                msg="[$date_str] $seat_name에 $remain석 생겼어요!"
+                msg="[$date_str] $seat_name에 $remain석 생겼어요! 구역: $formatted_area"
               else
                 msg="[$date_str] $seat_name은 아직 자리가 없어요 ㅠㅠ"
               fi
