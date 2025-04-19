@@ -1,9 +1,9 @@
 name: Melon Ticket Checker (Custom)
 
-on:
-  schedule:
-    - cron: '*/10 * * * *'  # 매 10분마다 실행
-  workflow_dispatch:
+#on:
+  #schedule:
+    - #cron: '*/10 * * * *'  # 매 10분마다 실행
+  #workflow_dispatch:
 
 jobs:
   check:
