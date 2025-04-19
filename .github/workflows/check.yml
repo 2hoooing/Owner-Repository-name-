@@ -3,7 +3,7 @@ name: Melon Ticket Checker (Custom)
 on:
   schedule:
     - cron: '*/10 * * * *'  # 매 10분마다 실행
-  workflow_dispatch:        # 수동 실행도 가능하게 함
+  workflow_dispatch:
 
 jobs:
   check:
@@ -27,6 +27,9 @@ jobs:
             [12171]="일반지정석"
           )
 
+          has_seats=0
+          messages=""
+
           for date in "${dates[@]}"; do
             schedule_id="${date%%|*}"
             date_str="${date##*|}"
@@ -44,29 +47,30 @@ jobs:
               fi
 
               if (( remain > 0 )); then
+                has_seats=1
                 area_lines=$(echo "$result" | jq -r ".summary[] | select(.seatGradeNo == \"$seat_id\") | [.sntv, .realSeatCntlk] | @tsv")
                 formatted_areas=""
                 while IFS=$'\t' read -r sntv count; do
                   if (( count > 0 )); then
-                    floor="${sntv%%,*}"
                     block="${sntv##*,}"
                     formatted_areas+="${block}: ${count}석, "
                   fi
                 done <<< "$area_lines"
                 formatted_areas="${formatted_areas%, }"
-                msg="[$date_str] $seat_name에 $remain석 생겼어요! 구역: $formatted_areas"
-              else
-                msg="[$date_str] $seat_name은 아직 자리가 없어요 ㅠㅠ"
+                messages+="- [$date_str] $seat_name에 ${remain}석 생겼어요! 구역: $formatted_areas"$'\n'
               fi
-
-              curl -X POST -H 'Content-type: application/json' \
-                --data "{\"text\": \"$msg\"}" \
-                "$DISCORD_WEBHOOK"
-
-              sleep 1
             done
           done
+
+          if (( has_seats == 1 )); then
+            msg="$messages"
+          else
+            msg="💤 모든 날짜에 자리가 없어요 ㅠㅠ"
+          fi
+
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\": \"$msg\"}" \
+            "$DISCORD_WEBHOOK"
+
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-
-# trigger: dummy push to activate cron
