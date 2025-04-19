@@ -40,8 +40,13 @@ jobs:
               result=$(curl -s -H 'User-Agent: Mozilla/5.0' \
                 "https://ticket.melon.com/api/product/getBlockGradeSeatCount.json?productId=211159&scheduleId=$schedule_id")
 
-              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo == \"$seat_id\") | .realSeatCntlk")
+              # ⚠️ jq 파싱 에러 방지
+              if ! echo "$result" | jq empty 2>/dev/null; then
+                echo "⚠️ API 응답이 올바르지 않음 → scheduleId=$schedule_id, seatId=$seat_id"
+                continue
+              fi
 
+              remain=$(echo "$result" | jq ".summary[] | select(.seatGradeNo == \"$seat_id\") | .realSeatCntlk")
               if [[ "$remain" == "null" || "$remain" == "" ]]; then
                 remain=0
               fi
