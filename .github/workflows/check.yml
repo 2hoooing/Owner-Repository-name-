@@ -68,3 +68,5 @@ jobs:
           done
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+# trigger: dummy push to activate cron
