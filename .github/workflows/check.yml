@@ -70,7 +70,7 @@ jobs:
           if (( has_seats == 1 )); then
             msg="$messages"
           else
-            msg="💤 모든 날짜에 자리가 없어요 ㅠㅠ"
+            msg="💤 모든 날짜에 자리가 없어 ㅠㅠ"
           fi
 
           curl -X POST -H 'Content-type: application/json' \
